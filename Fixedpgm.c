@@ -21,23 +21,26 @@ static rgb_t grundfarben[7] = {
 };
 
 //-------------------------------------------------------------------------------------------------
+#if 0 // currently not used, keep compiler happy
 static void Dim( rgb_t * p, uint8 factor )
 {
     // factor nicht größer als 5!
     uint8 r = *p >> 11;
-    uint8 g = *p >> 5;
+    uint8 g = (*p >> 5) & 0x3f;
     uint8 b = *p & 0x1f;
+    // keep factor in check
+    factor = factor % 5;
     r >>= factor;
     g >>= factor;
     b >>= factor;
     *p = RGB(r, g, b);
 }
-
+#endif
 //-------------------------------------------------------------------------------------------------
 static void ColorChange( rgb_t* p )
 {
     uint8 r = *p >> 11;
-    uint8 g = *p >> 5;
+    uint8 g = (*p >> 5) & 0x3f;
     uint8 b = *p & 0x1f;
     r += 8;
     r &= 0x1f;
