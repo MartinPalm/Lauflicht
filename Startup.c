@@ -60,7 +60,7 @@ void Coldstart(void)
     FCTL3 = FWKEY + LOCK;                   // lock flash memory against writing
 
     // Digital I/O
-    P1OUT  = 0x00;                          // 0,2,4, 6 output
+    P1OUT  = 0x00;                          // 0,2,4,6 output
     P1REN  = 0x00;                          // P1.3 pullup enabled
     P1DIR  = 0x55;                          // P1.0, P1.2, P1.4, P1.6 are outputs
     P1IE   = 0x00;                          // no port 1 interrupts
@@ -74,12 +74,12 @@ void Coldstart(void)
     P2SEL  = 0x00;                          // no functions enabled
     P2SEL2 = 0x00;                          // no functions enabled
 
-    // generell mal die interruts einschalten
+    // enable interrups
     __eint();
 
     // Setup Timer A
-    TACTL = TASSEL_2 + ID_0 + MC_1;           // SMCLK, upmode
-    TACCR0 = 20000;                           // 16Mhz , 40000 == 2,5ms
+    TACTL   = TASSEL_2 + ID_0 + MC_1;           // SMCLK, upmode
+    TACCR0  = 20000;                           // 16Mhz , 40000 == 2,5ms
     TACCTL0 = CCIE;                           // CCR0 interrupt enabled
 
     // Setup SPI
@@ -94,7 +94,7 @@ void Coldstart(void)
     UCA0CTL1   &=  ~UCSWRST;   //  **Initialize    USCI    state   machine**
 
 // jetzt erstmal alles duster....
-    memset (ledbuffer, 0, sizeof (ledbuffer) );
+    memset (ledbuffer, 0x00, sizeof (ledbuffer) );
     SendSequenz(ledbuffer);
 
 }
