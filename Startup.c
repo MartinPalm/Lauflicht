@@ -133,8 +133,9 @@ __interrupt void TimerIRQ (void)
         // Blinkmuster weiterschalten
         if (newkey & NEXTPROG) {
             sequenznummer++;
+            // Wrap around when pdata is NULL
             if( ! sequenz[sequenznummer].pdata) {
-            	sequenznummer = 1;
+            	sequenznummer = 0;
             }
         }
         oldkey = newkey;

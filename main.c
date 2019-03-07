@@ -30,8 +30,6 @@ const rgb_t data1 [LEDCOUNT][16] = {
 
 volatile uint8 sequenznummer;
 
-static uint8 rgb24buffer[LEDCOUNT*3];
-
 sequenz_t sequenz[NUMSEQUENZ];
 
 uint16 deltatime = 100;
@@ -49,34 +47,30 @@ void Wait( void )
 }
 
 //-------------------------------------------------------------------------------------------------
-static void SendRGBBuffer (void)
+static void SendRGBBuffer (uint8 *buf, uint8 count)
 {
-    uint16 i;
-    for (i = 0; i < sizeof (rgb24buffer); i++) {
-        while  (!(IFG2 & UCA0TXIFG));    //  USCI_A0 TX buffer ready?
-        UCA0TXBUF = rgb24buffer[i];      //  Send Data to slave
+	// Der letzte Wert in der Kette muss als erster Wert übertragen werden
+    for (; count; count--) {
+        while  (!(IFG2 & UCA0TXIFG));	//  USCI_A0 TX buffer ready?
+        UCA0TXBUF = *(buf+count-1);		//  Send Data to slave
     }
 }
-
 
 //-------------------------------------------------------------------------------------------------
 void SendSequenz( rgb_t* pLedData)
 {
-    uint16 i;
-    uint16 index = 0;
+    static uint8 rgb24buffer[LEDCOUNT*3]; // das gehört nicht auf den Stack
 
+    uint16 i;
     // Umrechnen 16bit 565 in 24bit 888
-   for( i = 0; i < sizeof (rgb24buffer); i++) {
-        rgb24buffer[index++]  = (*pLedData & rdmask) << 8; // R im MSB
-        rgb24buffer[index++] += (*pLedData & gnmask) << 5; // G
-        rgb24buffer[index++] += (*pLedData & blmask) << 3; // B im LSB
-        pLedData++;
+    for( i = 0; i < sizeof (rgb24buffer); pLedData++) {
+        rgb24buffer[i++]  = (*pLedData & rdmask) << 8; // R im MSB
+        rgb24buffer[i++] += (*pLedData & gnmask) << 5; // G
+        rgb24buffer[i++] += (*pLedData & blmask) << 3; // B im LSB
     }
     __dint(); //
-    for( i = 0; i < LEDCOUNT; i++ ) {
-       SendRGBBuffer ();
-    }
-    __eint();
+    SendRGBBuffer (rgb24buffer, sizeof (rgb24buffer));
+     __eint();
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -113,7 +107,7 @@ int main( void )
         }
 
         if( !sequenz[sequenznummer].pdata) {
-        	sequenznummer = 1;  // eigentlich 0, aber der geht gerade noch nicht
+        	sequenznummer = 0;
         }
     } while( 1 );
     return 0;
