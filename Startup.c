@@ -120,19 +120,22 @@ __interrupt void TimerIRQ (void)
     // 2. Job: Keys abfragen
     newkey = GetKeys ();
     if (oldkey != newkey) {
-        // Handle keys
+        // Keyhandling faster
         if (newkey & FASTER) {
             if (deltatime < FASTTEST)
                 deltatime += 10;
         }
+        // Keyhandling slower
         if (newkey & SLOWER) {
             if (deltatime > SLOWEST)
                 deltatime -= 10;
         }
+        // Blinkmuster weiterschalten
         if (newkey & NEXTPROG) {
             sequenznummer++;
-            if (sequenznummer > MAXSEQUENZ)
-                sequenznummer = 0;
+            if( ! sequenz[sequenznummer].pdata) {
+            	sequenznummer = 1;
+            }
         }
         oldkey = newkey;
     }
