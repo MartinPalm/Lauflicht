@@ -25,10 +25,10 @@ static rgb_t grundfarben[7] = {
 static void Dim( rgb_t * p, uint8 factor )
 {
     // factor nicht größer als 5!
-    uint8 r = *p >> 11;
-    uint8 g = (*p >> 5) & 0x3f;
-    uint8 b = *p & 0x1f;
-    // keep factor in check
+    uint8 r = (*p >> 8) & 0xF8;
+    uint8 g = (*p >> 3) & 0xFC;
+    uint8 b = *p << 3;
+   // keep factor in check
     factor = factor % 5;
     r >>= factor;
     g >>= factor;
@@ -39,20 +39,19 @@ static void Dim( rgb_t * p, uint8 factor )
 //-------------------------------------------------------------------------------------------------
 static void ColorChange( rgb_t* p )
 {
-    uint8 r = *p >> 11;
-    uint8 g = (*p >> 5) & 0x3f;
-    uint8 b = *p & 0x1f;
-    r += 8;
-    r &= 0x1f;
+    uint8 r = (*p >> 8) & 0xF8;
+    uint8 g = (*p >> 3) & 0xFC;
+    uint8 b = *p << 3;
+
+    r += 0x10;
     if( !r ) {
-        g += 16;
-        g &= 0x3f;
+        g += 0x10;
     }
     if( !g ) {
-        b += 8;
-        b &= 0x1f;
+        b += 0x10;
     }
     *p = RGB(r, g, b);
+
 }
 
 //-------------------------------------------------------------------------------------------------
@@ -145,7 +144,7 @@ void fixpgm2( uint8 pgmnum )
 void fixpgm3( uint8 pgmnum )
 {
     uint16 i;
-    uint16 j = 0;
+    uint16 j = 1;
     // Create Data
     ledbuffer[0] = RGB(0, 0, 85);
     ledbuffer[1] = RGB(0, 0, 170);

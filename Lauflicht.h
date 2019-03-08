@@ -25,6 +25,8 @@ typedef uint16 rgb_t;
 
 // 3*uint8 zu RGB 565 wandeln
 #define RGB(r, g, b) ((((r) >> 3) & 0x1f) << 11) + ((((g) >> 2) & 0x3f) << 5) + (((b) >> 3) & 0x1f)
+// RGB 565 zu 3*uint8 wandeln
+#define TC(in,r,g,b) ((r)=((in)>>8)&0xF8; (g)=((in)>>3)&0xFC; (b)=((in)<<3)&0xF8;)
 
 typedef struct {
   uint8	 maxschritt;
