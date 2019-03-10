@@ -9,6 +9,8 @@
 #include "Lauflicht.h"
 #include "string.h"
 
+static uint16 deltatime = 100;
+
 uint8 GetKeys(void)
 {
     return ((P1IN & 0x08) ? 0 : 0x08); // P1.3 ist Taster auf Evalboard
@@ -93,10 +95,7 @@ void Coldstart(void)
     P1SEL2     =   BIT2 | BIT4;
     UCA0CTL1   &=  ~UCSWRST;   //  **Initialize    USCI    state   machine**
 
-// jetzt erstmal alles duster....
-    memset (ledbuffer, 0x00, sizeof (ledbuffer) );
-    SendSequenz(ledbuffer);
-
+    InitLedbuffer ();
 }
 
 
