@@ -122,7 +122,7 @@ void fixpgm1( uint8 pgmnum )
             SendSequenz(ledbuffer, LEDCOUNT);
             Wait ();
         }
-         j++;
+        j++;
     } while( sequenznummer == pgmnum );
 }
 
